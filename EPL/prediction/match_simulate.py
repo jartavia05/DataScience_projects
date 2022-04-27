@@ -12,28 +12,28 @@ import pandas as pd
 
 
 def get_score(home, away, nsim):
-    game_score = history.loc[(history['HomeTeam'] == home) & (history['AwayTeam'] == away) ]
-    ave_h_s = 0 if game_score['FTHG'].empty else game_score['FTHG'].mean()
-    ave_a_s = 0 if game_score['FTAG'].empty else game_score['FTAG'].mean()
+    teams_history = history.loc[(history['HomeTeam'] == home) & (history['AwayTeam'] == away) ]
+    ave_h_s = 0 if teams_history['FTHG'].empty else teams_history['FTHG'].mean()
+    ave_a_s = 0 if teams_history['FTAG'].empty else teams_history['FTAG'].mean()
 
     # Stats of the Home Team
-    t_ave_h_s = 0 if game_score['FTHG'].empty else game_score['FTHG'].loc[history['HomeTeam'] == home].mean()
-    t_ave_h_c = 0 if game_score['FTAG'].empty else game_score['FTAG'].loc[history['HomeTeam'] == home].mean()
+    t_ave_h_s = 0 if teams_history['FTHG'].empty else teams_history['FTHG'].loc[history['HomeTeam'] == home].mean()
+    t_ave_h_c = 0 if teams_history['FTAG'].empty else teams_history['FTAG'].loc[history['HomeTeam'] == home].mean()
 
     # Stats of the Away Team
-    t_ave_a_s = 0 if game_score['FTAG'].empty else game_score['FTAG'].loc[history['AwayTeam'] == away].mean()
-    t_ave_a_c = 0 if game_score['FTHG'].empty else game_score['FTHG'].loc[history['AwayTeam'] == away].mean()
+    t_ave_a_s = 0 if teams_history['FTAG'].empty else teams_history['FTAG'].loc[history['AwayTeam'] == away].mean()
+    t_ave_a_c = 0 if teams_history['FTHG'].empty else teams_history['FTHG'].loc[history['AwayTeam'] == away].mean()
   
     goals = []
     h_scored = [] 
     a_scored = []
     for i in range(nsim):  
-        if len(game_score) > 3 :
+        if len(teams_history) > 3 :
             goals.append(i)
             h_scored.append(poisson.pmf(k=i,mu=ave_h_s))
             a_scored.append(poisson.pmf(k=i,mu=ave_a_s))
             
-        else:  #take into account both attacking stat of home and defense stats of away
+        else:  # take into account both attacking stat of home and defense stats of away
             goals.append(i)
             h_scored.append(poisson.pmf(k=i,mu=(1/2 * (t_ave_h_s + t_ave_a_c))))
             a_scored.append(poisson.pmf(k=i,mu=(1/2 * (t_ave_a_s + t_ave_h_c))))
@@ -47,6 +47,6 @@ def get_score(home, away, nsim):
         
 
 
-match_simulate = get_score('Crystal Palace','Leeds', 6)
+match_simulate = get_score('Chelsea','West Ham', 6)
 print(match_simulate)
 
