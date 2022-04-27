@@ -10,8 +10,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-
-def get_score(home, away, nsim):
+def get_match_score(home, away, nsim):
     teams_history = history.loc[(history['HomeTeam'] == home) & (history['AwayTeam'] == away) ]
     ave_h_s = 0 if teams_history['FTHG'].empty else teams_history['FTHG'].mean()
     ave_a_s = 0 if teams_history['FTAG'].empty else teams_history['FTAG'].mean()
@@ -25,28 +24,27 @@ def get_score(home, away, nsim):
     t_ave_a_c = 0 if teams_history['FTHG'].empty else teams_history['FTHG'].loc[history['AwayTeam'] == away].mean()
   
     goals = []
-    h_scored = [] 
-    a_scored = []
+    score_pred = []
+    score_prob = []
     for i in range(nsim):  
-        if len(teams_history) > 3 :
-            goals.append(i)
-            h_scored.append(poisson.pmf(k=i,mu=ave_h_s))
-            a_scored.append(poisson.pmf(k=i,mu=ave_a_s))
-            
+        if len(teams_history) > 3 :            
+            for j in range(nsim):
+                goals.append(i)
+                score_pred.append('"{}-{}"'.format(i,j))
+                score_prob.append(poisson.pmf(k=i,mu=ave_h_s) + poisson.pmf(k=j,mu=ave_a_s))
         else:  # take into account both attacking stat of home and defense stats of away
-            goals.append(i)
-            h_scored.append(poisson.pmf(k=i,mu=(1/2 * (t_ave_h_s + t_ave_a_c))))
-            a_scored.append(poisson.pmf(k=i,mu=(1/2 * (t_ave_a_s + t_ave_h_c))))
+            for k in range(nsim):
+                goals.append(i)
+                score_pred.append('{}-{}'.format(i,k))
+                score_prob.append(poisson.pmf(k=i,mu=(1/2 * (t_ave_h_s + t_ave_a_c))) + poisson.pmf(k=j,mu=(1/2 * (t_ave_a_s + t_ave_h_c))))
+
     
-    match_pred = {'Home': home,'Away': away,'Goals': goals, 'HomeScored': h_scored, 'AwayScored':a_scored}
-    match_pred_df = pd.DataFrame(match_pred)
-    print(match_pred_df)
-    match_pred_df.to_csv('match_simulate_{}_vs_{}.csv'.format(home, away))
+    match_score = pd.DataFrame({'Home': home,'Away': away,'Goals': goals, 'score_pred': score_pred, 'prob': score_prob}).sort_values(by='prob', ascending=False).head(5)
+    match_score.to_csv('match_simulate_{}_vs_{}.csv'.format(home, away))
+    print(match_score)    
 
-    return h_scored, a_scored
+    return match_score
         
-
-
-match_simulate = get_score('Chelsea','West Ham', 6)
+match_simulate = get_match_score('Man United','Chelsea', 6)
 print(match_simulate)
 
