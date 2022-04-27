@@ -23,9 +23,3 @@ history = history.loc[history['Season'].isin(seasons)]
 ave_home = history['FTHG'].mean()
 ave_away = history['FTAG'].mean()
 ave = mean(history['FTHG'] + history['FTAG'])
-
-
-print(teams)
-#print(ave_home)
-#print(ave_away)
-#print(ave)
