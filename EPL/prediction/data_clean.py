@@ -11,7 +11,7 @@ from statistics import mean
 import pandas as pd
 
 
-history = pd.read_csv('dataset/history.csv')
+history = pd.read_csv('EPL/dataset/history.csv')
 teams = pd.unique(history['HomeTeam'])
 
 # Get the history file filtered by seasons from 2010 to 2018. 
