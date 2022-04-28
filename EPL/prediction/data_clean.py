@@ -13,7 +13,7 @@ import pandas as pd
 history = pd.read_csv('EPL/dataset/epl_history.csv')
 teams = pd.unique(history['HomeTeam'])
 
-# Get the history file filtered by seasons from 2010 to 2018. 
+# Get the history file filtered by seasons from 2010 to 2022. 
 seasons = []
 for x in list(range(10,22)): seasons.append('{}-{}'.format(2000+x,x+1))
 history = history.loc[history['Season'].isin(seasons)]
