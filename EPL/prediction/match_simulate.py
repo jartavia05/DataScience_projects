@@ -30,7 +30,7 @@ def get_match_score(home, away, nsim):
     h_goal_prob = []
     a_goal_prob = []
     m_result = []
-    
+
     for i in range(nsim):                   
         for j in range(nsim):
             h_goal.append(i)
@@ -50,7 +50,7 @@ def get_match_score(home, away, nsim):
             else:  # take into account both attacking stat of home and defense stats of away
                 h_goal_prob.append(poisson.pmf(k=i,mu=(1/2 * (t_ave_h_s + t_ave_a_c))))
                 a_goal_prob.append(poisson.pmf(k=j,mu=(1/2 * (t_ave_a_s + t_ave_h_c))))
-                score_pred.append('{}-{}'.format(i,j))
+                score_pred.append('"{}-{}"'.format(i,j))
                 score_prob.append(poisson.pmf(k=i,mu=(1/2 * (t_ave_h_s + t_ave_a_c))) + poisson.pmf(k=j,mu=(1/2 * (t_ave_a_s + t_ave_h_c))))
     
     match_score = pd.DataFrame({'Home': home,'h_goals': h_goal, 'h_goal_prob': h_goal_prob,'Away': away,'a_goals': a_goal,'a_goal_prob':a_goal_prob,'score_pred': score_pred,'m_result':m_result, 'prob': score_prob}).sort_values(by='prob', ascending=False).head(10)
